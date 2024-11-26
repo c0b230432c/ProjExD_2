@@ -13,6 +13,7 @@ DELTA={pg.K_UP:(0,-5),
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+
 def check_bound(rct:pg.Rect) -> tuple [bool, bool]:
     """
     引数のrctが画面内かどうか判断する関数
@@ -25,6 +26,7 @@ def check_bound(rct:pg.Rect) -> tuple [bool, bool]:
     if rct.top < 0 or rct.bottom > HEIGHT:
         tate = False
     return (yoko, tate)
+
 
 def game_over(screen: pg.Surface) -> None:
     """
@@ -57,6 +59,7 @@ def game_over(screen: pg.Surface) -> None:
     time.sleep(5)
     return
 
+
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
     演習ex2
@@ -73,6 +76,7 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_img.set_colorkey(0)
         ex_bombs.append(bb_img)
     return (ex_bombs, accs)
+
 
 def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     """
@@ -98,9 +102,11 @@ def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     }
     return kk_dict[sum_mv]
 
+
 def calc_orientation(org: pg.Rect, dst: pg.Rect,
                      current_xy: tuple[float, float]) -> tuple[float, float]:
     pass
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
