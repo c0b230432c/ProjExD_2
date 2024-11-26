@@ -36,7 +36,7 @@ def game_over(screen: pg.Surface) -> None:
     """
     go_img = pg.Surface((WIDTH, HEIGHT))  #ブラックアウト用のsurface
     pg.draw.rect(go_img, 0, pg.Rect(0, 0, WIDTH, HEIGHT))
-    go_img.set_alpha(220)
+    go_img.set_alpha(200)
     screen.blit(go_img, [0, 0])
     # Gameoverの文字
     fonto = pg.font.Font(None, 80)
@@ -57,6 +57,22 @@ def game_over(screen: pg.Surface) -> None:
     time.sleep(5)
     return
 
+def init_bb_imgs()->tuple[list[pg.Surface], list[int]]:
+    """
+    拡大した爆弾の大きさと加速度を保存したリストを作る関数
+    引数:なし
+    戻り値:拡大爆弾Surfaceのリストと加速度のリストのタプル"""
+    accs=[]
+    ex_bombs=[]
+    for i in range(1,11):
+        accs.append(i)
+        bb_img = pg.Surface((20*i, 20*i))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*i, 10*i), 10*i)
+        bb_img.set_colorkey(0)
+        ex_bombs.append(bb_img)
+    return (ex_bombs, accs)
+
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -65,9 +81,10 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+    bb_imgs, bb_accs = init_bb_imgs()
     bb_img = pg.Surface((20,20))
     pg.draw.circle(bb_img,(255,0,0),(10,10),10)
-    bb_img.set_colorkey(0)
+    bb_img.set_colorkey(0) 
     bb_rct = bb_img.get_rect()
     bb_rct.center = (random.randint(0,WIDTH),random.randint(0,HEIGHT))
     vx,vy=5,5  #爆弾座標の変化量
@@ -82,6 +99,13 @@ def main():
             return
         screen.blit(bg_img, [0, 0])
 
+        #tmrに応じて爆弾サイズと速度を上昇
+        bb_img = bb_imgs[min(tmr//100, 9)]
+        bb_rct.width = bb_img.get_rect().width
+        bb_rct.height = bb_img.get_rect().height
+        avx = vx * bb_accs[min(tmr//100, 9)]
+        avy = vy * bb_accs[min(tmr//100, 9)]
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0,0]
         for key,move in DELTA.items():  #辞書に移動量を保存
@@ -89,7 +113,7 @@ def main():
                 sum_mv[0]+=move[0]
                 sum_mv[1]+=move[1]
         kk_rct.move_ip(sum_mv)
-        bb_rct.move_ip(vx,vy)
+        bb_rct.move_ip(avx,avy)
         # こうかとんが画面外だった場合元の場所に戻す
         if check_bound(kk_rct) != (True,True):
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
