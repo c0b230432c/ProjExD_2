@@ -29,6 +29,7 @@ def check_bound(rct:pg.Rect)->tuple[bool:bool]:
 
 def game_over(screen: pg.Surface) -> None:
     """
+    課題ex1
     ゲームオーバーの時の処理
     ブラックアウトとGame Overの文字、こうかとんの表示
     引数:スクリーンのsurface
@@ -59,6 +60,7 @@ def game_over(screen: pg.Surface) -> None:
 
 def init_bb_imgs()->tuple[list[pg.Surface], list[int]]:
     """
+    課題ex2
     拡大した爆弾の大きさと加速度を保存したリストを作る関数
     引数:なし
     戻り値:拡大爆弾Surfaceのリストと加速度のリストのタプル"""
@@ -101,6 +103,7 @@ def main():
 
         #tmrに応じて爆弾サイズと速度を上昇
         bb_img = bb_imgs[min(tmr//100, 9)]
+        #幅と高さを取得
         bb_rct.width = bb_img.get_rect().width
         bb_rct.height = bb_img.get_rect().height
         avx = vx * bb_accs[min(tmr//100, 9)]
