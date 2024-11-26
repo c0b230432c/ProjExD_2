@@ -99,7 +99,9 @@ def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     }
     return kk_dict[sum_mv]
 
-
+def calc_orientation(org: pg.Rect, dst: pg.Rect,
+                     current_xy: tuple[float, float]) -> tuple[float, float]:
+    pass
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -127,7 +129,7 @@ def main():
         screen.blit(bg_img, [0, 0])
 
         #tmrに応じて爆弾サイズと速度を上昇
-        bb_img = bb_imgs[min(tmr//100, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
         #幅と高さを取得
         bb_rct.width = bb_img.get_rect().width
         bb_rct.height = bb_img.get_rect().height
