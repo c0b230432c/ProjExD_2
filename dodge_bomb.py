@@ -14,22 +14,22 @@ DELTA={pg.K_UP:(0,-5),
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-def check_bound(rct:pg.Rect)->tuple[bool:bool]:
+def check_bound(rct:pg.Rect) -> tuple [bool, bool]:
     """
     引数のrctが画面内かどうか判断する関数
     引数:rct
     戻り値:bool2つのタプル(横,縦）/画面内がTrue
     """
-    tate,yoko=True,True  #画面内か判断する
-    if rct.left<0 or rct.right>WIDTH:
-        yoko=False
-    if rct.top<0 or rct.bottom>HEIGHT:
-        tate=False
-    return (yoko,tate)
+    tate, yoko = True, True  #画面内か判断する
+    if rct.left < 0 or rct.right > WIDTH:
+        yoko = False
+    if rct.top < 0 or rct.bottom > HEIGHT:
+        tate = False
+    return (yoko, tate)
 
 def game_over(screen: pg.Surface) -> None:
     """
-    課題ex1
+    演習ex1
     ゲームオーバーの時の処理
     ブラックアウトとGame Overの文字、こうかとんの表示
     引数:スクリーンのsurface
@@ -41,7 +41,7 @@ def game_over(screen: pg.Surface) -> None:
     screen.blit(go_img, [0, 0])
     # Gameoverの文字
     fonto = pg.font.Font(None, 80)
-    txt = fonto.render("Game Over", True, (255,255,255))
+    txt = fonto.render("Game Over", True, (255, 255, 255))
     txt_rct = txt.get_rect()
     txt_rct.center = WIDTH/2, HEIGHT/2
     screen.blit(txt, txt_rct)
@@ -58,15 +58,16 @@ def game_over(screen: pg.Surface) -> None:
     time.sleep(5)
     return
 
-def init_bb_imgs()->tuple[list[pg.Surface], list[int]]:
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
-    課題ex2
+    演習ex2
     拡大した爆弾の大きさと加速度を保存したリストを作る関数
     引数:なし
-    戻り値:拡大爆弾Surfaceのリストと加速度のリストのタプル"""
+    戻り値:拡大爆弾Surfaceのリストと加速度のリストのタプル
+    """
     accs=[]
     ex_bombs=[]
-    for i in range(1,11):
+    for i in range(1, 11):
         accs.append(i)
         bb_img = pg.Surface((20*i, 20*i))
         pg.draw.circle(bb_img, (255, 0, 0), (10*i, 10*i), 10*i)
@@ -74,7 +75,7 @@ def init_bb_imgs()->tuple[list[pg.Surface], list[int]]:
         ex_bombs.append(bb_img)
     return (ex_bombs, accs)
 
-def get_kk_img(sum_mv: tuple[int, int])->pg.Surface:
+def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
     """
     演習ex3
     移動量に応じて対応する向きの画像のこうかとんを返す関数
@@ -85,6 +86,7 @@ def get_kk_img(sum_mv: tuple[int, int])->pg.Surface:
     kk_imgm45=pg.transform.rotozoom(pg.image.load("fig/3.png"), -45, 0.9)
     kk_img45=pg.transform.rotozoom(pg.image.load("fig/3.png"), 45, 0.9)
     kk_img90=pg.transform.rotozoom(pg.image.load("fig/3.png"), 90, 0.9)
+    # 方向に応じた画像の辞書の作成
     kk_dict={(0,0):kk_img0,
              (-5,0):kk_img0,
              (-5,-5):kk_imgm45,
@@ -93,7 +95,7 @@ def get_kk_img(sum_mv: tuple[int, int])->pg.Surface:
              (5,0):pg.transform.flip(kk_img0, True, False),
              (5,5):pg.transform.flip(kk_img45, True, False),
              (0,5):pg.transform.flip(kk_img90, True, False),
-             (-5,5):kk_img45
+             (-5,5):kk_img45,
     }
     return kk_dict[sum_mv]
 
@@ -106,7 +108,7 @@ def main():
     kk_img=pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)    
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-    bb_imgs, bb_accs = init_bb_imgs()
+    bb_imgs, bb_accs = init_bb_imgs()  #演習2の爆弾拡大関数の呼び出し
     bb_img = pg.Surface((20,20))
     pg.draw.circle(bb_img,(255,0,0),(10,10),10)
     bb_img.set_colorkey(0) 
@@ -129,8 +131,8 @@ def main():
         #幅と高さを取得
         bb_rct.width = bb_img.get_rect().width
         bb_rct.height = bb_img.get_rect().height
-        avx = vx * bb_accs[min(tmr//100, 9)]
-        avy = vy * bb_accs[min(tmr//100, 9)]
+        avx = vx * bb_accs[min(tmr//500, 9)]
+        avy = vy * bb_accs[min(tmr//500, 9)]
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0,0]
@@ -141,18 +143,18 @@ def main():
                 sum_mv[1]+=move[1]
         kk_img=get_kk_img(tuple(sum_mv))
         kk_rct.move_ip(sum_mv)
-        bb_rct.move_ip(avx,avy)
+        bb_rct.move_ip(avx, avy)
         # こうかとんが画面外だった場合元の場所に戻す
-        if check_bound(kk_rct) != (True,True):
-            kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
+        if check_bound(kk_rct) != (True, True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         # 爆弾が画面外の場合跳ね返る
-        bb_res_y,bb_res_t=check_bound(bb_rct)
+        bb_res_y, bb_res_t=check_bound(bb_rct)
         if not bb_res_y:
             vx*=-1
         if not bb_res_t:
             vy*=-1
         screen.blit(kk_img, kk_rct)
-        screen.blit(bb_img,bb_rct)
+        screen.blit(bb_img, bb_rct)
         pg.display.update()
         tmr += 1
         clock.tick(50)
