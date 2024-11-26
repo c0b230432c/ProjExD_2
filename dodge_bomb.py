@@ -74,13 +74,36 @@ def init_bb_imgs()->tuple[list[pg.Surface], list[int]]:
         ex_bombs.append(bb_img)
     return (ex_bombs, accs)
 
+def get_kk_img(sum_mv: tuple[int, int])->pg.Surface:
+    """
+    演習ex3
+    移動量に応じて対応する向きの画像のこうかとんを返す関数
+    引数:移動量のタプル
+    戻り値:向きを変えた画像Surface
+    """
+    kk_img0=pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    kk_imgm45=pg.transform.rotozoom(pg.image.load("fig/3.png"), -45, 0.9)
+    kk_img45=pg.transform.rotozoom(pg.image.load("fig/3.png"), 45, 0.9)
+    kk_img90=pg.transform.rotozoom(pg.image.load("fig/3.png"), 90, 0.9)
+    kk_dict={(0,0):kk_img0,
+             (-5,0):kk_img0,
+             (-5,-5):kk_imgm45,
+             (0,-5):pg.transform.flip(kk_img90, True, True),
+             (5,-5):pg.transform.flip(kk_imgm45, True, False),
+             (5,0):pg.transform.flip(kk_img0, True, False),
+             (5,5):pg.transform.flip(kk_img45, True, False),
+             (0,5):pg.transform.flip(kk_img90, True, False),
+             (-5,5):kk_img45
+    }
+    return kk_dict[sum_mv]
+
 
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
-    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    bg_img = pg.image.load("fig/pg_bg.jpg")
+    kk_img=pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)    
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
     bb_imgs, bb_accs = init_bb_imgs()
@@ -111,10 +134,12 @@ def main():
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0,0]
+
         for key,move in DELTA.items():  #辞書に移動量を保存
             if key_lst[key]:
                 sum_mv[0]+=move[0]
                 sum_mv[1]+=move[1]
+        kk_img=get_kk_img(tuple(sum_mv))
         kk_rct.move_ip(sum_mv)
         bb_rct.move_ip(avx,avy)
         # こうかとんが画面外だった場合元の場所に戻す
